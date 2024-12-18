@@ -1,0 +1,32 @@
+name: auth_manager
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.6.1
+  hive: ^2.2.3
+  shared_preferences: ^2.3.4
+  axons_totp:
+    git: 
+      url: https://github.com/AxonDesigns/axons_totp.git
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: JetbrainsMono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Variable.ttf
+          weight: 700
+        - asset: assets/fonts/JetBrainsMono-VariableItalic.ttf
+          style: italic
