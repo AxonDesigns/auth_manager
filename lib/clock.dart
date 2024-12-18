@@ -53,10 +53,10 @@ class _ClockState extends State<Clock> {
         children: [
           _buildText(context, inverted: true),
           ClipRect(
-            clipper: CustomRect(
-              heightFactor: 0.5,
+            clipper: FractionalClipRect(
+              heightFactor: 1.0,
               widthFactor: _seconds / 30,
-              alignment: Alignment.center,
+              alignment: Alignment.centerLeft,
             ),
             child: _buildText(context, inverted: false),
           ),

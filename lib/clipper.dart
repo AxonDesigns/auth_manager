@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 
-class CustomRect extends CustomClipper<Rect> {
-  const CustomRect({
+class FractionalClipRect extends CustomClipper<Rect> {
+  const FractionalClipRect({
     required this.heightFactor,
     required this.widthFactor,
     this.alignment = Alignment.center,
@@ -20,18 +20,16 @@ class CustomRect extends CustomClipper<Rect> {
     final currentWidth = size.width * widthFactor;
     final currentHeight = size.height * heightFactor;
 
-    //TODO: Alinear esto
-
     return Rect.fromLTRB(
-      0,
-      size.height * alignmentY,
-      currentWidth,
-      (size.height * alignmentY) + currentHeight,
+      lerpDouble(0, size.width - currentWidth, alignmentX)!,
+      lerpDouble(0, size.height - currentHeight, alignmentY)!,
+      lerpDouble(0 + currentWidth, size.width, alignmentX)!,
+      lerpDouble(0 + currentHeight, size.height, alignmentY)!,
     );
   }
 
   @override
-  bool shouldReclip(CustomRect oldClipper) {
+  bool shouldReclip(FractionalClipRect oldClipper) {
     return oldClipper.heightFactor != heightFactor ||
         oldClipper.widthFactor != widthFactor;
   }
