@@ -1,4 +1,4 @@
-package com.axonstudios.auth_manager
+package com.example.auth_manager
 
 import io.flutter.embedding.android.FlutterActivity
 
