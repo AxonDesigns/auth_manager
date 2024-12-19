@@ -71,64 +71,71 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                     ),
                     builder: (context) {
-                      return Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Form(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Add Provider",
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              const SizedBox(height: 20),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: "Name",
+                      return SingleChildScrollView(
+                        controller: ModalScrollController.of(context),
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Form(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Add Provider",
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _name = value;
-                                  });
-                                },
-                              ),
-                              const SizedBox(height: 8),
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: "Token",
-                                  suffixIcon: IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.qr_code_scanner),
+                                const SizedBox(height: 20),
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: "Name",
                                   ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _name = value;
+                                    });
+                                  },
                                 ),
-                                obscureText: true,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _token = value;
-                                  });
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  FilledButton.tonal(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text("Cancel"),
+                                const SizedBox(height: 8),
+                                TextFormField(
+                                  decoration: InputDecoration(
+                                    labelText: "Token",
+                                    suffixIcon: IconButton(
+                                      onPressed: () {},
+                                      icon: const Icon(Icons.qr_code_scanner),
+                                    ),
                                   ),
-                                  const SizedBox(width: 10),
-                                  FilledButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text("Save"),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                  obscureText: true,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _token = value;
+                                    });
+                                  },
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    FilledButton.tonal(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text("Cancel"),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    FilledButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text("Save"),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
