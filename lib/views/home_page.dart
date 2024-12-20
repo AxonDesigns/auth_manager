@@ -1,9 +1,8 @@
 import 'package:async_widget_builder/async_widget_builder.dart';
 import 'package:auth_manager/business.dart';
-import 'package:auth_manager/views/code_page.dart';
+import 'package:auth_manager/core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' hide Provider;
 import 'package:isar/isar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -218,14 +217,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                   return ListTile(
                     title: Text(data[index].name),
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => CodePage(
-                            name: data[index].name,
-                            token: data[index].token,
-                          ),
-                        ),
-                      );
+                      ref.read(routerProvider).push("/totp", extra: {
+                        "name": data[index].name,
+                        "token": data[index].token,
+                      });
                     },
                     trailing: IconButton(
                       onPressed: () async {

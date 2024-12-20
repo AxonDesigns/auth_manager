@@ -1,6 +1,6 @@
 import 'dart:async';
-
-import 'package:auth_manager/components/progress_with_code.dart';
+import 'package:auth_manager/components.dart';
+import 'package:auth_manager/utils.dart';
 import 'package:axons_totp/axons_totp.dart';
 import 'package:flutter/material.dart';
 
@@ -25,15 +25,12 @@ class _CodePageState extends State<CodePage> {
   @override
   void initState() {
     super.initState();
-    final initialDelay = 1000 - DateTime.now().millisecond;
-    _updateTime(_timer);
-    Future.delayed(Duration(milliseconds: initialDelay), () {
-      _updateTime(_timer);
-      _timer = Timer.periodic(const Duration(milliseconds: 1000), _updateTime);
-    });
+    executeOnSeconds(_updateTime);
+    _updateTime(null);
   }
 
   _updateTime(Timer? timer) {
+    _timer = timer;
     setState(() {
       _seconds = 30 - ((DateTime.now().second + 0) % 30);
     });
@@ -48,13 +45,14 @@ class _CodePageState extends State<CodePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(),
       body: Center(
-        child: ProgressWithCode(
+        child: CodeTimer(
           code: TOTP.generate(widget.token),
-          value: _seconds.toDouble(),
-          minValue: 0,
-          maxValue: 30,
+          seconds: _seconds,
+          minSeconds: 0,
+          maxSeconds: 30,
         ),
       ),
     );

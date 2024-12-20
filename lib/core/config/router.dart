@@ -22,6 +22,20 @@ var router = GoRouter(
         child: const AboutPage(),
       ),
     ),
+    GoRoute(
+      path: '/totp',
+      name: "totp",
+      pageBuilder: (context, state) {
+        final map = state.extra! as Map<String, dynamic>;
+        return MaterialPage(
+          key: state.pageKey,
+          child: TotpPage(
+            name: map["name"] as String,
+            token: map["token"] as String,
+          ),
+        );
+      },
+    ),
   ],
 );
 
