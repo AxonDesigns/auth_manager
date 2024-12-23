@@ -20,7 +20,9 @@ class _TotpPageState extends State<TotpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(widget.name),
+      ),
       body: Center(
         child: TotpDisplay(
           token: widget.token,

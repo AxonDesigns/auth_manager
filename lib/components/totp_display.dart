@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:auth_manager/components/fractional_clip_r_rect.dart';
 import 'package:axons_totp/axons_totp.dart';
 import 'package:flutter/material.dart';

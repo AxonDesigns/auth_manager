@@ -3,21 +3,20 @@ import 'package:auth_manager/business.dart';
 import 'package:auth_manager/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final documentsDir = await getApplicationDocumentsDirectory();
-  final isar = await Isar.open(
-    [ProviderSchema],
-    directory: documentsDir.path,
-  );
+  await Hive.initFlutter(documentsDir.path);
+  Hive.registerAdapter(AccountAdapter());
+  final accountsBox = await Hive.openBox<Account>("accounts");
 
   runApp(ProviderScope(
     overrides: [
-      dbProvider.overrideWith((ref) => isar),
+      accountsProvider.overrideWith((ref) => accountsBox),
     ],
     child: const MainApp(),
   ));
@@ -45,8 +44,8 @@ class MainApp extends ConsumerWidget {
       themeMode: ThemeMode.dark,
       darkTheme: ThemeData.from(
         colorScheme: ColorScheme.fromSeed(
-          dynamicSchemeVariant: DynamicSchemeVariant.monochrome,
-          seedColor: Colors.grey,
+          dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+          seedColor: Colors.white,
           brightness: Brightness.dark,
         ),
         useMaterial3: true,

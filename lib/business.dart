@@ -1,2 +1,2 @@
 export 'business/database.dart';
-export 'business/entities/provider.dart';
+export 'business/entities/account.dart';

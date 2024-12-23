@@ -1,10 +1,8 @@
-import 'package:async_widget_builder/async_widget_builder.dart';
 import 'package:auth_manager/business.dart';
 import 'package:auth_manager/core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart' hide Provider;
-import 'package:isar/isar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -15,11 +13,11 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  late Future<List<Provider>> providers;
+  late List<Account> accounts;
   late ScrollController scrollController;
   bool _atTop = true;
   String _name = "";
-  String _token = "";
+  String _uri = "";
 
   @override
   void initState() {
@@ -37,8 +35,8 @@ class _HomePageState extends ConsumerState<HomePage> {
         }
       });
 
-    final db = ref.read(dbProvider);
-    providers = db.providers.where().findAll();
+    final accountsBox = ref.read(accountsProvider);
+    accounts = accountsBox.values.toList();
   }
 
   @override
@@ -60,7 +58,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               IconButton(
                 onPressed: () async {
                   _name = "";
-                  _token = "";
+                  _uri = "";
                   await showMaterialModalBottomSheet(
                     context: context,
                     shape: const RoundedRectangleBorder(
@@ -101,7 +99,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 const SizedBox(height: 8),
                                 TextFormField(
                                   decoration: InputDecoration(
-                                    labelText: "Token",
+                                    labelText: "Uri",
                                     suffixIcon: IconButton(
                                       onPressed: () {},
                                       icon: const Icon(Icons.qr_code_scanner),
@@ -110,7 +108,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   obscureText: true,
                                   onChanged: (value) {
                                     setState(() {
-                                      _token = value;
+                                      _uri = value;
                                     });
                                   },
                                 ),
@@ -141,15 +139,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                     },
                   );
 
-                  if (_name.isNotEmpty && _token.isNotEmpty) {
-                    final db = ref.read(dbProvider);
-                    final provider = Provider()
-                      ..name = _name
-                      ..token = _token;
-                    await db.writeTxn(() async {
-                      await db.providers.put(provider);
-                      providers = db.providers.where().findAll();
-                    });
+                  if (_name.isNotEmpty && _uri.isNotEmpty) {
+                    final accountsBox = ref.read(accountsProvider);
+                    final provider = Account(
+                      id: accountsBox.length,
+                      url: _uri,
+                    );
+
+                    await accountsBox.add(provider);
                     setState(() {});
                   }
                 },
@@ -159,10 +156,8 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
           CupertinoSliverRefreshControl(
             onRefresh: () async {
-              final db = ref.read(dbProvider);
-              await db.writeTxn(() async {
-                providers = db.providers.where().findAll();
-              });
+              final accountsBox = ref.read(accountsProvider);
+              accounts = accountsBox.values.toList();
             },
             refreshTriggerPullDistance: 50,
             refreshIndicatorExtent: 50,
@@ -192,67 +187,49 @@ class _HomePageState extends ConsumerState<HomePage> {
               );
             },
           ),
-          providers.buildWidget(
-            data: (data) {
-              if (data.isEmpty) {
-                return const SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "Start by adding a provider",
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+          if (accounts.isEmpty)
+            const SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Start by adding a provider",
+                      textAlign: TextAlign.center,
                     ),
+                  ],
+                ),
+              ),
+            ),
+          if (accounts.isNotEmpty)
+            SliverList.builder(
+              itemCount: accounts.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(
+                    accounts[index].username,
+                  ),
+                  subtitle: Text(
+                    accounts[index].provider,
+                  ),
+                  onTap: () {
+                    ref.read(routerProvider).push("/totp", extra: {
+                      "name": accounts[index].provider,
+                      "token": accounts[index].secret,
+                    });
+                  },
+                  trailing: IconButton(
+                    onPressed: () async {
+                      final accountsBox = ref.read(accountsProvider);
+                      await accountsBox.delete(accounts[index].id);
+                      setState(() {});
+                    },
+                    icon: const Icon(Icons.delete),
                   ),
                 );
-              }
-
-              return SliverList.builder(
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(data[index].name),
-                    onTap: () {
-                      ref.read(routerProvider).push("/totp", extra: {
-                        "name": data[index].name,
-                        "token": data[index].token,
-                      });
-                    },
-                    trailing: IconButton(
-                      onPressed: () async {
-                        final db = ref.read(dbProvider);
-                        await db.writeTxn(() async {
-                          await db.providers.delete(data[index].id);
-                          providers = db.providers.where().findAll();
-                        });
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.delete),
-                    ),
-                  );
-                },
-              );
-            },
-            loading: () => const SliverFillRemaining(
-              hasScrollBody: false,
-              child: Center(child: CircularProgressIndicator()),
+              },
             ),
-            error: (err, stackTrace) {
-              return const SliverFillRemaining(
-                hasScrollBody: false,
-                child: Center(
-                  child: Text(
-                    "Error",
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              );
-            },
-          ),
         ],
       ),
     );
