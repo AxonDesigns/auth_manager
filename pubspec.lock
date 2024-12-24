@@ -55,13 +55,13 @@ packages:
       url: "https://github.com/AxonDesigns/async_widget_builder.git"
     source: git
     version: "0.0.1"
-  axons_totp:
+  axons_otp:
     dependency: "direct main"
     description:
       path: "."
       ref: HEAD
-      resolved-ref: daa283781f28b10828b0b95843c9bf2f3fcce37d
-      url: "https://github.com/AxonDesigns/axons_totp.git"
+      resolved-ref: "39b0ab43109d1b1831bb3a0092df9cd874b363a8"
+      url: "https://github.com/AxonDesigns/axons_otp.git"
     source: git
     version: "1.0.0"
   base32:

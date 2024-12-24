@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:auth_manager/components.dart';
 import 'package:auth_manager/utils.dart';
-import 'package:axons_totp/axons_totp.dart';
+import 'package:axons_otp/axons_otp.dart';
 import 'package:flutter/material.dart';
 
 class CodePage extends StatefulWidget {

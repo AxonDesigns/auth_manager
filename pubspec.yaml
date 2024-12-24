@@ -10,9 +10,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_riverpod: ^2.6.1
-  axons_totp:
+  axons_otp:
     git: 
-      url: https://github.com/AxonDesigns/axons_totp.git
+      url: https://github.com/AxonDesigns/axons_otp.git
   numberpicker: ^2.1.2
   go_router: ^14.6.2
   path_provider: ^2.1.5

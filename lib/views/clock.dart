@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:auth_manager/components/fractional_clip_r_rect.dart';
-import 'package:axons_totp/axons_totp.dart';
+import 'package:axons_otp/axons_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 
