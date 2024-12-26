@@ -1,14 +1,19 @@
 import 'dart:ui';
 import 'package:auth_manager/business.dart';
 import 'package:auth_manager/core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  if (kReleaseMode) {
+    await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+  }
   final documentsDir = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(documentsDir.path);
   Hive.registerAdapter(AccountAdapter());
@@ -22,11 +27,39 @@ Future<void> main() async {
   ));
 }
 
-class MainApp extends ConsumerWidget {
+class MainApp extends ConsumerStatefulWidget {
   const MainApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    final router = ref.read(routerProvider);
+    if (state == AppLifecycleState.paused) {
+      router.goNamed("locked", extra: {
+        "reason": "App paused",
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
@@ -50,6 +83,15 @@ class MainApp extends ConsumerWidget {
         ),
         useMaterial3: true,
       ),
+      builder: (context, child) {
+        return AnnotatedRegion(
+          value: SystemUiOverlayStyle(
+            statusBarColor: Theme.of(context).colorScheme.surface,
+            systemNavigationBarColor: Theme.of(context).colorScheme.surface,
+          ),
+          child: child!,
+        );
+      },
       routerConfig: router,
     );
   }

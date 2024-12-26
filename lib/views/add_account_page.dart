@@ -10,13 +10,13 @@ class AddAccountPage extends ConsumerStatefulWidget {
 }
 
 class _AddAccountPageState extends ConsumerState<AddAccountPage> {
-  final _userNameController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _providerController = TextEditingController();
   final _secretController = TextEditingController();
 
   @override
   void dispose() {
-    _userNameController.dispose();
+    _usernameController.dispose();
     _providerController.dispose();
     _secretController.dispose();
     super.dispose();
@@ -31,22 +31,34 @@ class _AddAccountPageState extends ConsumerState<AddAccountPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                width: 50,
+                height: 4,
+              ),
+            ),
+            const SizedBox(height: 20),
             Text(
-              "Add Provider",
+              "New Account",
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 20),
             TextFormField(
-              controller: _userNameController,
+              controller: _providerController,
+              autofocus: true,
               decoration: const InputDecoration(
                 labelText: "Provider",
               ),
             ),
             const SizedBox(height: 8),
             TextFormField(
-              controller: _userNameController,
+              controller: _usernameController,
               decoration: const InputDecoration(
-                labelText: "User Name",
+                labelText: "Username",
               ),
             ),
             const SizedBox(height: 8),
@@ -78,7 +90,7 @@ class _AddAccountPageState extends ConsumerState<AddAccountPage> {
                     Navigator.of(context).pop(Account(
                       id: accountsBox.length,
                       url:
-                          "otpauth://totp/${_providerController.text}:${_userNameController.text}?"
+                          "otpauth://totp/${_providerController.text}:${_usernameController.text}?"
                           "secret=${_secretController.text}&issuer=${_providerController.text}",
                     ));
                   },

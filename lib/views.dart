@@ -1,5 +1,11 @@
-export 'views/home_page.dart';
+export 'views/authenticators_page.dart';
 export 'views/about_page.dart';
 export 'views/code_page.dart';
 export 'views/totp_page.dart';
 export 'views/add_account_page.dart';
+export 'views/locked_page.dart';
+export 'views/passwords_page.dart';
+export 'views/payments_page.dart';
+export 'views/main_shell.dart';
+export 'views/settings_page.dart';
+export 'views/home_page.dart';

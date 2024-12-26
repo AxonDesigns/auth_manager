@@ -22,6 +22,10 @@ dependencies:
   modal_bottom_sheet: ^3.0.0
   hive_ce: ^2.8.0+2
   hive_ce_flutter: ^2.1.0
+  permission_handler: ^11.3.1
+  local_auth: ^2.3.0
+  flutter_windowmanager: ^0.2.0
+  salomon_bottom_bar: ^3.3.2
 
 dev_dependencies:
   flutter_test:
