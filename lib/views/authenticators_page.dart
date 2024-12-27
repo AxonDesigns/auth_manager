@@ -1,6 +1,5 @@
 import 'package:auth_manager/business.dart';
 import 'package:auth_manager/components.dart';
-import 'package:auth_manager/components/refreshable_physics.dart';
 import 'package:auth_manager/core.dart';
 import 'package:auth_manager/views.dart';
 import 'package:flutter/material.dart';
@@ -67,15 +66,13 @@ class _HomePageState extends ConsumerState<AuthenticatorsPage> {
                       minWidth: 32,
                       child: CircularProgressIndicator(
                         strokeCap: StrokeCap.round,
-                        value: mode == RefreshIndicatorMode.drag ? pulledExtent / refreshTriggerPullDistance : null,
-                        color: switch (mode) {
-                          RefreshIndicatorMode.armed => Colors.red,
-                          RefreshIndicatorMode.refresh => Colors.blue,
-                          RefreshIndicatorMode.done => Colors.green,
-                          _ => Colors.white.withOpacity(
-                              (pulledExtent / refreshTriggerPullDistance).clamp(0, 1),
-                            ),
-                        },
+                        value: mode == RefreshIndicatorMode.drag
+                            ? pulledExtent / refreshTriggerPullDistance
+                            : null,
+                        color: Colors.white.withOpacity(
+                          (pulledExtent / refreshTriggerPullDistance)
+                              .clamp(0, 1),
+                        ),
                       ),
                     ),
                   ),
@@ -84,13 +81,14 @@ class _HomePageState extends ConsumerState<AuthenticatorsPage> {
             ),
             if (accounts.isEmpty)
               const SliverFillRemaining(
-                hasScrollBody: false,
+                hasScrollBody: true,
+                fillOverscroll: false,
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "Start by adding an authenticator",
+                        "Add a new authenticator\nor\npull down to refresh",
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -147,9 +145,7 @@ class _HomePageState extends ConsumerState<AuthenticatorsPage> {
         ),
       ),
       builder: (context) {
-        return AnimatedPadding(
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.fastEaseInToSlowEaseOut,
+        return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),

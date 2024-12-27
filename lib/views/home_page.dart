@@ -46,7 +46,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView.builder(
-        physics: CustomPageViewScrollPhysics(),
+        physics: const CustomPageViewScrollPhysics(),
         itemCount: items.length,
         controller: controller,
         onPageChanged: (value) {

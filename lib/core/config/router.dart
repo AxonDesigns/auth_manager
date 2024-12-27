@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:auth_manager/views.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,12 +68,6 @@ var router = GoRouter(
             key: state.pageKey,
             child: const LockedPage(),
           ),
-          redirect: (context, state) {
-            if (Platform.isWindows || Platform.isLinux) {
-              return Routes.passwords.path;
-            }
-            return null;
-          },
         ),
         GoRoute(
           path: Routes.totp.path,

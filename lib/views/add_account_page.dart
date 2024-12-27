@@ -86,6 +86,11 @@ class _AddAccountPageState extends ConsumerState<AddAccountPage> {
                 const SizedBox(width: 10),
                 FilledButton(
                   onPressed: () {
+                    if (_providerController.text.isEmpty ||
+                        _usernameController.text.isEmpty ||
+                        _secretController.text.isEmpty) {
+                      return;
+                    }
                     final accountsBox = ref.read(accountsProvider);
                     Navigator.of(context).pop(Account(
                       id: accountsBox.length,

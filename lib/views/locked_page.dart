@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auth_manager/business/biometrics.dart';
 import 'package:auth_manager/core.dart';
 import 'package:flutter/material.dart';
@@ -11,19 +13,27 @@ class LockedPage extends ConsumerStatefulWidget {
 }
 
 class _LockedPageState extends ConsumerState<LockedPage> {
+  bool get canAuthenticate => Platform.isAndroid || Platform.isIOS;
+
   @override
   void initState() {
     super.initState();
-    _authenticate();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _authenticate();
+    });
   }
 
   void _authenticate() async {
+    if (!canAuthenticate) {
+      return;
+    }
+
     final authenticated =
         await requestBiometricAuthentication("Authenticate to unlock");
     if (!authenticated) return;
 
     final router = ref.read(routerProvider);
-    router.go(Routes.passwords.path);
+    router.go(Routes.authenticators.path);
   }
 
   @override
@@ -31,7 +41,14 @@ class _LockedPageState extends ConsumerState<LockedPage> {
     return Scaffold(
       body: Center(
         child: TextButton(
-          onPressed: _authenticate,
+          onPressed: () {
+            if (!canAuthenticate) {
+              final router = ref.read(routerProvider);
+              router.go(Routes.authenticators.path);
+              return;
+            }
+            _authenticate();
+          },
           child: const Row(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
