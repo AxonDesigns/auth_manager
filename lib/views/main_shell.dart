@@ -1,6 +1,7 @@
 import 'package:auth_manager/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 class MainShell extends ConsumerStatefulWidget {
@@ -26,19 +27,23 @@ class _MainShellState extends ConsumerState<MainShell> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _selectedIndex = items.indexOf(Routes.values.firstWhere((element) {
+      return element.path == ref.read(routerProvider).routerDelegate.currentConfiguration.fullPath;
+    }));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 20),
-        Expanded(
-          child: widget.child,
-        ),
+        Expanded(child: widget.child),
         Container(
           decoration: BoxDecoration(
             border: Border(
               top: BorderSide(
-                color:
-                    Theme.of(context).colorScheme.onSurface.withOpacity(0.25),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.25),
                 width: 1,
               ),
             ),
@@ -46,8 +51,7 @@ class _MainShellState extends ConsumerState<MainShell> {
           child: SalomonBottomBar(
             backgroundColor: Theme.of(context).colorScheme.surface,
             selectedItemColor: Theme.of(context).colorScheme.onSurface,
-            unselectedItemColor:
-                Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
+            unselectedItemColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
             margin: const EdgeInsets.all(20),
             itemPadding: const EdgeInsets.symmetric(
               vertical: 15,

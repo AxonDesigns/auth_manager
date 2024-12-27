@@ -33,14 +33,11 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     int index = 0;
     if (widget.pagePath != null) {
-      if (!items.any((element) => element.path == widget.pagePath)) {
-        final router = ref.read(routerProvider);
-        router.goNamed(widget.pagePath!);
-        return;
+      if (items.any((element) => element.path == widget.pagePath)) {
+        index = items.indexOf(Routes.values.firstWhere((element) {
+          return element.path == widget.pagePath;
+        }));
       }
-      index = items.indexOf(Routes.values.firstWhere((element) {
-        return element.path == widget.pagePath;
-      }));
     }
 
     controller = PageController(
@@ -81,8 +78,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         child: SalomonBottomBar(
           backgroundColor: Theme.of(context).colorScheme.surface,
           selectedItemColor: Theme.of(context).colorScheme.onSurface,
-          unselectedItemColor:
-              Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
+          unselectedItemColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
           margin: const EdgeInsets.all(20),
           itemPadding: const EdgeInsets.symmetric(
             vertical: 15,

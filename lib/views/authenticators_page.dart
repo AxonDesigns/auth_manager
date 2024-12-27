@@ -1,8 +1,8 @@
 import 'package:auth_manager/business.dart';
+import 'package:auth_manager/components.dart';
 import 'package:auth_manager/components/refreshable_physics.dart';
 import 'package:auth_manager/core.dart';
 import 'package:auth_manager/views.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -38,8 +38,9 @@ class _HomePageState extends ConsumerState<AuthenticatorsPage> {
               floating: true,
               title: Text("Authenticators"),
             ),
-            CupertinoSliverRefreshControl(
+            PullToRefreshSliver(
               onRefresh: () async {
+                await Future.delayed(const Duration(seconds: 1));
                 final accountsBox = ref.read(accountsProvider);
                 accounts = accountsBox.values.toList();
               },
@@ -66,16 +67,13 @@ class _HomePageState extends ConsumerState<AuthenticatorsPage> {
                       minWidth: 32,
                       child: CircularProgressIndicator(
                         strokeCap: StrokeCap.round,
-                        value: mode == RefreshIndicatorMode.drag
-                            ? pulledExtent / refreshTriggerPullDistance
-                            : null,
+                        value: mode == RefreshIndicatorMode.drag ? pulledExtent / refreshTriggerPullDistance : null,
                         color: switch (mode) {
                           RefreshIndicatorMode.armed => Colors.red,
                           RefreshIndicatorMode.refresh => Colors.blue,
                           RefreshIndicatorMode.done => Colors.green,
                           _ => Colors.white.withOpacity(
-                              (pulledExtent / refreshTriggerPullDistance)
-                                  .clamp(0, 1),
+                              (pulledExtent / refreshTriggerPullDistance).clamp(0, 1),
                             ),
                         },
                       ),

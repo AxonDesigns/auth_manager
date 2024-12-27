@@ -18,12 +18,11 @@ class _LockedPageState extends ConsumerState<LockedPage> {
   }
 
   void _authenticate() async {
-    final authenticated =
-        await requestBiometricAuthentication("Authenticate to unlock");
+    final authenticated = await requestBiometricAuthentication("Authenticate to unlock");
     if (!authenticated) return;
 
     final router = ref.read(routerProvider);
-    router.goNamed(Routes.authenticators.name);
+    router.goNamed(Routes.passwords.name);
   }
 
   @override
