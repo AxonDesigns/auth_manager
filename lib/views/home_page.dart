@@ -1,3 +1,4 @@
+import 'package:auth_manager/components.dart';
 import 'package:auth_manager/core.dart';
 import 'package:auth_manager/views.dart';
 import 'package:flutter/material.dart';
@@ -7,10 +8,7 @@ import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({
     super.key,
-    this.pagePath,
   });
-
-  final String? pagePath;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _HomePageState();
@@ -30,14 +28,12 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
-
+    final path = ref.read(routerProvider).currentPath;
     int index = 0;
-    if (widget.pagePath != null) {
-      if (items.any((element) => element.path == widget.pagePath)) {
-        index = items.indexOf(Routes.values.firstWhere((element) {
-          return element.path == widget.pagePath;
-        }));
-      }
+    if (items.any((element) => element.path == path)) {
+      index = items.indexOf(Routes.values.firstWhere((element) {
+        return element.path == path;
+      }));
     }
 
     controller = PageController(
@@ -50,12 +46,14 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView.builder(
+        physics: CustomPageViewScrollPhysics(),
         itemCount: items.length,
         controller: controller,
         onPageChanged: (value) {
-          setState(() {
-            _selectedIndex = value;
-          });
+          final router = ref.read(routerProvider);
+          _selectedIndex = value;
+          router.go(items[_selectedIndex].path);
+          setState(() {});
         },
         itemBuilder: (context, index) {
           return [
@@ -78,7 +76,8 @@ class _HomePageState extends ConsumerState<HomePage> {
         child: SalomonBottomBar(
           backgroundColor: Theme.of(context).colorScheme.surface,
           selectedItemColor: Theme.of(context).colorScheme.onSurface,
-          unselectedItemColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
+          unselectedItemColor:
+              Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
           margin: const EdgeInsets.all(20),
           itemPadding: const EdgeInsets.symmetric(
             vertical: 15,

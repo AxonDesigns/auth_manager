@@ -57,51 +57,87 @@ var router = GoRouter(
   initialLocation: Routes.locked.path,
   routes: [
     GoRoute(
-        path: Routes.home.path,
-        name: Routes.home.name,
-        redirect: (context, state) {
-          return null;
-        },
-        routes: [
-          GoRoute(
-            path: "/:path",
-            pageBuilder: (context, state) => MaterialPage(
+      path: Routes.home.path,
+      name: Routes.home.name,
+      redirect: (context, state) {
+        return null;
+      },
+      routes: [
+        GoRoute(
+          path: Routes.locked.path,
+          name: Routes.locked.name,
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: const LockedPage(),
+          ),
+          redirect: (context, state) {
+            if (Platform.isWindows || Platform.isLinux) {
+              return Routes.passwords.path;
+            }
+            return null;
+          },
+        ),
+        GoRoute(
+          path: Routes.totp.path,
+          name: Routes.totp.name,
+          pageBuilder: (context, state) {
+            final map = state.extra! as Map<String, dynamic>;
+            return MaterialPage(
               key: state.pageKey,
-              child: HomePage(
-                pagePath: state.pathParameters["path"],
+              child: TotpPage(
+                name: map["name"] as String,
+                token: map["token"] as String,
               ),
-            ),
-          ),
-          GoRoute(
-            path: Routes.locked.path,
-            name: Routes.locked.name,
-            pageBuilder: (context, state) => MaterialPage(
+            );
+          },
+        ),
+        GoRoute(
+          path: "/:path",
+          pageBuilder: (context, state) {
+            return MaterialPage(
               key: state.pageKey,
-              child: const LockedPage(),
-            ),
-            redirect: (context, state) {
-              if (Platform.isWindows || Platform.isLinux) {
-                print("object");
-                return Routes.passwords.path;
-              }
-              return null;
-            },
-          ),
-          GoRoute(
-            path: Routes.totp.path,
-            name: Routes.totp.name,
-            pageBuilder: (context, state) {
-              final map = state.extra! as Map<String, dynamic>;
-              return MaterialPage(
-                key: state.pageKey,
-                child: TotpPage(
-                  name: map["name"] as String,
-                  token: map["token"] as String,
-                ),
-              );
-            },
-          ),
-        ]),
+              child: const HomePage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: Routes.authenticators.path,
+          pageBuilder: (context, state) {
+            return MaterialPage(
+              key: state.pageKey,
+              child: const HomePage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: Routes.passwords.path,
+          pageBuilder: (context, state) {
+            return MaterialPage(
+              key: state.pageKey,
+              child: const HomePage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: Routes.payments.path,
+          pageBuilder: (context, state) {
+            return MaterialPage(
+              key: state.pageKey,
+              child: const HomePage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: Routes.settings.path,
+          pageBuilder: (context, state) {
+            return MaterialPage(
+              key: state.pageKey,
+              child: const HomePage(),
+            );
+          },
+        ),
+      ],
+    ),
   ],
 );
 
