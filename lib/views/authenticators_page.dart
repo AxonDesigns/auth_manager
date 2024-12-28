@@ -2,6 +2,7 @@ import 'package:auth_manager/business.dart';
 import 'package:auth_manager/components.dart';
 import 'package:auth_manager/core.dart';
 import 'package:auth_manager/views.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -27,61 +28,31 @@ class _HomePageState extends ConsumerState<AuthenticatorsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RefreshPhysics(
-        builder: (controller, physics) => CustomScrollView(
-          controller: controller,
-          physics: physics,
+      body: EasyRefresh(
+        header: ClassicHeader(
+          position: IndicatorPosition.locator,
+          boxDecoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.25),
+          ),
+        ),
+        notLoadFooter: const NotLoadFooter(clamping: true),
+        onRefresh: () async {
+          await Future.delayed(const Duration(seconds: 1));
+          final accountsBox = ref.read(accountsProvider);
+          accounts = accountsBox.values.toList();
+        },
+        onLoad: null,
+        child: CustomScrollView(
           slivers: [
             const SliverAppBar(
               centerTitle: true,
               floating: true,
               title: Text("Authenticators"),
             ),
-            PullToRefreshSliver(
-              onRefresh: () async {
-                await Future.delayed(const Duration(seconds: 1));
-                final accountsBox = ref.read(accountsProvider);
-                accounts = accountsBox.values.toList();
-              },
-              refreshTriggerPullDistance: 100,
-              refreshIndicatorExtent: 100,
-              builder: (
-                context,
-                mode,
-                pulledExtent,
-                refreshTriggerPullDistance,
-                refreshIndicatorExtent,
-              ) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.25),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Center(
-                    child: OverflowBox(
-                      alignment: Alignment.center,
-                      minHeight: 32,
-                      maxHeight: 32,
-                      maxWidth: 32,
-                      minWidth: 32,
-                      child: CircularProgressIndicator(
-                        strokeCap: StrokeCap.round,
-                        value: mode == RefreshIndicatorMode.drag
-                            ? pulledExtent / refreshTriggerPullDistance
-                            : null,
-                        color: Colors.white.withOpacity(
-                          (pulledExtent / refreshTriggerPullDistance)
-                              .clamp(0, 1),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
+            const HeaderLocator.sliver(),
             if (accounts.isEmpty)
               const SliverFillRemaining(
-                hasScrollBody: true,
+                hasScrollBody: false,
                 fillOverscroll: false,
                 child: Center(
                   child: Column(

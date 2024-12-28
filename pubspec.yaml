@@ -26,6 +26,7 @@ dependencies:
   local_auth: ^2.3.0
   flutter_windowmanager: ^0.2.0
   salomon_bottom_bar: ^3.3.2
+  easy_refresh: ^3.4.0
 
 dev_dependencies:
   flutter_test:

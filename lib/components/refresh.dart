@@ -285,30 +285,15 @@ class _PullToRefreshStateSliver extends State<PullToRefreshSliver> {
   // A state machine transition calculator. Multiple states can be transitioned
   // through per single call.
   RefreshIndicatorMode transitionNextState() {
-    RefreshIndicatorMode nextState;
-
-    void goToDone() {
-      nextState = RefreshIndicatorMode.done;
-      // Either schedule the RenderSliver to re-layout on the next frame
-      // when not currently in a frame or schedule it on the next frame.
-      if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.idle) {
-        setState(() => hasSliverLayoutExtent = false);
-      } else {
-        SchedulerBinding.instance.addPostFrameCallback((Duration timestamp) {
-          setState(() => hasSliverLayoutExtent = false);
-        }, debugLabel: 'Refresh.goToDone');
-      }
-    }
-
     switch (refreshState) {
       case RefreshIndicatorMode.inactive:
-        if (latestIndicatorBoxExtent <= 0) {
+        if (latestIndicatorBoxExtent <=
+            (widget.refreshIndicatorExtent *
+                _inactiveResetOverscrollFraction)) {
           return RefreshIndicatorMode.inactive;
         } else {
-          nextState = RefreshIndicatorMode.drag;
+          return RefreshIndicatorMode.drag;
         }
-        continue drag;
-      drag:
       case RefreshIndicatorMode.drag:
         if (latestIndicatorBoxExtent == 0) {
           return RefreshIndicatorMode.inactive;
@@ -316,67 +301,45 @@ class _PullToRefreshStateSliver extends State<PullToRefreshSliver> {
             widget.refreshTriggerPullDistance) {
           return RefreshIndicatorMode.drag;
         } else {
-          if (widget.onRefresh != null) {
-            HapticFeedback.mediumImpact();
-            // Call onRefresh after this frame finished since the function is
-            // user supplied and we're always here in the middle of the sliver's
-            // performLayout.
+          if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.idle) {
+            setState(() => hasSliverLayoutExtent = true);
+          } else {
             SchedulerBinding.instance.addPostFrameCallback(
                 (Duration timestamp) {
-              refreshTask = widget.onRefresh!()
-                ..whenComplete(() {
-                  if (mounted) {
-                    setState(() => refreshTask = null);
-                    // Trigger one more transition because by this time, BoxConstraint's
-                    // maxHeight might already be resting at 0 in which case no
-                    // calls to [transitionNextState] will occur anymore and the
-                    // state may be stuck in a non-inactive state.
-                    refreshState = transitionNextState();
-                  }
-                });
               setState(() => hasSliverLayoutExtent = true);
-            }, debugLabel: 'Refresh.transition');
+            }, debugLabel: 'Refresh.refresh');
           }
           return RefreshIndicatorMode.armed;
         }
       case RefreshIndicatorMode.armed:
-        if (refreshState == RefreshIndicatorMode.armed &&
-            refreshTask == null &&
-            !_isDragging) {
-          goToDone();
-          continue done;
+        if (latestIndicatorBoxExtent < widget.refreshTriggerPullDistance &&
+            _isDragging) {
+          return RefreshIndicatorMode.drag;
         }
 
-        if (latestIndicatorBoxExtent > widget.refreshIndicatorExtent) {
-          return RefreshIndicatorMode.armed;
-        } else {
-          nextState = RefreshIndicatorMode.refresh;
-        }
-        continue refresh;
-      refresh:
-      case RefreshIndicatorMode.refresh:
-        if (refreshTask != null) {
+        if (!_isDragging) {
           return RefreshIndicatorMode.refresh;
-        } else {
-          goToDone();
         }
-        continue done;
-      done:
+        return RefreshIndicatorMode.armed;
+      case RefreshIndicatorMode.refresh:
+        refreshTask = widget.onRefresh!()
+          ..whenComplete(() {
+            if (mounted) {
+              refreshState = RefreshIndicatorMode.done;
+              hasSliverLayoutExtent = false;
+              setState(() => refreshTask = null);
+            }
+          });
+        return RefreshIndicatorMode.refresh;
       case RefreshIndicatorMode.done:
-        // Let the transition back to inactive trigger before strictly going
-        // to 0.0 since the last bit of the animation can take some time and
-        // can feel sluggish if not going all the way back to 0.0 prevented
-        // a subsequent pull-to-refresh from starting.
         if (latestIndicatorBoxExtent >
             widget.refreshTriggerPullDistance *
                 _inactiveResetOverscrollFraction) {
           return RefreshIndicatorMode.done;
         } else {
-          nextState = RefreshIndicatorMode.inactive;
+          return RefreshIndicatorMode.inactive;
         }
     }
-
-    return nextState;
   }
 
   @override
