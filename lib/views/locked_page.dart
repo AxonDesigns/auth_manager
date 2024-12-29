@@ -12,7 +12,7 @@ class LockedPage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _LockedPageState();
 }
 
-class _LockedPageState extends ConsumerState<LockedPage> {
+class _LockedPageState extends ConsumerState<LockedPage> with WidgetsBindingObserver {
   bool get canAuthenticate => Platform.isAndroid || Platform.isIOS;
 
   @override
@@ -28,8 +28,7 @@ class _LockedPageState extends ConsumerState<LockedPage> {
       return;
     }
 
-    final authenticated =
-        await requestBiometricAuthentication("Authenticate to unlock");
+    final authenticated = await requestBiometricAuthentication("Authenticate to unlock");
     if (!authenticated) return;
 
     final router = ref.read(routerProvider);

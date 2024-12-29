@@ -1,5 +1,4 @@
 import 'package:auth_manager/business.dart';
-import 'package:auth_manager/components.dart';
 import 'package:auth_manager/core.dart';
 import 'package:auth_manager/views.dart';
 import 'package:easy_refresh/easy_refresh.dart';
@@ -29,11 +28,24 @@ class _HomePageState extends ConsumerState<AuthenticatorsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: EasyRefresh(
-        header: ClassicHeader(
+        header: BuilderHeader(
           position: IndicatorPosition.locator,
-          boxDecoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.25),
-          ),
+          hapticFeedback: true,
+          processedDuration: Duration.zero,
+          builder: (context, state) {
+            final offset = (state.offset / state.actualTriggerOffset).clamp(0.0, 1.0);
+            return Container(
+              color: Colors.black.withOpacity(0.25),
+              height: state.offset,
+              child: Center(
+                child: CircularProgressIndicator(
+                  value: [IndicatorMode.processing, IndicatorMode.ready].contains(state.mode) ? null : offset,
+                ),
+              ),
+            );
+          },
+          clamping: false,
+          triggerOffset: 50,
         ),
         notLoadFooter: const NotLoadFooter(clamping: true),
         onRefresh: () async {
