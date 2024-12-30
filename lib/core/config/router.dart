@@ -38,6 +38,11 @@ enum Routes {
     label: "Locked",
     name: "locked",
     path: "/locked",
+  ),
+  scanner(
+    label: "Scanner",
+    name: "scanner",
+    path: "/authenticators/scanner",
   );
 
   const Routes({
@@ -55,80 +60,81 @@ var router = GoRouter(
   initialLocation: Routes.locked.path,
   routes: [
     GoRoute(
-      path: Routes.home.path,
-      name: Routes.home.name,
-      redirect: (context, state) {
-        return null;
-      },
-      routes: [
-        GoRoute(
-          path: Routes.locked.path,
-          name: Routes.locked.name,
-          pageBuilder: (context, state) => MaterialPage(
-            key: state.pageKey,
-            child: const LockedPage(),
+      path: Routes.locked.path,
+      name: Routes.locked.name,
+      pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: const LockedPage(),
+      ),
+    ),
+    GoRoute(
+      path: Routes.totp.path,
+      name: Routes.totp.name,
+      pageBuilder: (context, state) {
+        final map = state.extra! as Map<String, dynamic>;
+        return MaterialPage(
+          key: state.pageKey,
+          child: TotpPage(
+            name: map["name"] as String,
+            token: map["token"] as String,
           ),
-        ),
-        GoRoute(
-          path: Routes.totp.path,
-          name: Routes.totp.name,
-          pageBuilder: (context, state) {
-            final map = state.extra! as Map<String, dynamic>;
-            return MaterialPage(
+        );
+      },
+    ),
+    //All other routes
+    /*GoRoute(
+      path: "/:path",
+      pageBuilder: (context, state) {
+        return MaterialPage(
+          key: state.pageKey,
+          child: const HomePage(),
+        );
+      },
+    ),*/
+    GoRoute(
+        path: Routes.authenticators.path,
+        pageBuilder: (context, state) {
+          return const MaterialPage(
+            key: ValueKey("home"),
+            child: HomePage(),
+          );
+        },
+        routes: [
+          GoRoute(
+            path: Routes.scanner.path,
+            name: Routes.scanner.name,
+            pageBuilder: (context, state) => MaterialPage(
               key: state.pageKey,
-              child: TotpPage(
-                name: map["name"] as String,
-                token: map["token"] as String,
-              ),
-            );
-          },
-        ),
-        GoRoute(
-          path: "/:path",
-          pageBuilder: (context, state) {
-            return MaterialPage(
-              key: state.pageKey,
-              child: const HomePage(),
-            );
-          },
-        ),
-        GoRoute(
-          path: Routes.authenticators.path,
-          pageBuilder: (context, state) {
-            return MaterialPage(
-              key: state.pageKey,
-              child: const HomePage(),
-            );
-          },
-        ),
-        GoRoute(
-          path: Routes.passwords.path,
-          pageBuilder: (context, state) {
-            return MaterialPage(
-              key: state.pageKey,
-              child: const HomePage(),
-            );
-          },
-        ),
-        GoRoute(
-          path: Routes.payments.path,
-          pageBuilder: (context, state) {
-            return MaterialPage(
-              key: state.pageKey,
-              child: const HomePage(),
-            );
-          },
-        ),
-        GoRoute(
-          path: Routes.settings.path,
-          pageBuilder: (context, state) {
-            return MaterialPage(
-              key: state.pageKey,
-              child: const HomePage(),
-            );
-          },
-        ),
-      ],
+              child: const ScannerPage(),
+            ),
+          ),
+        ]),
+    GoRoute(
+      path: Routes.passwords.path,
+      pageBuilder: (context, state) {
+        return const MaterialPage(
+          key: ValueKey("home"),
+          child: HomePage(),
+        );
+      },
+    ),
+    GoRoute(
+      path: Routes.payments.path,
+      pageBuilder: (context, state) {
+        return const MaterialPage(
+          key: ValueKey("home"),
+          child: HomePage(),
+        );
+      },
+    ),
+    GoRoute(
+      path: Routes.settings.path,
+      pageBuilder: (context, state) {
+        return const MaterialPage(
+          key: ValueKey("home"),
+          child: HomePage(),
+        );
+      },
     ),
   ],
 );

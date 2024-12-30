@@ -9,3 +9,4 @@ export 'views/payments_page.dart';
 export 'views/main_shell.dart';
 export 'views/settings_page.dart';
 export 'views/home_page.dart';
+export 'views/scanner_page.dart';

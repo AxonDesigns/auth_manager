@@ -3,6 +3,7 @@ import 'package:auth_manager/core.dart';
 import 'package:auth_manager/views.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
@@ -33,13 +34,17 @@ class _HomePageState extends ConsumerState<AuthenticatorsPage> {
           hapticFeedback: true,
           processedDuration: Duration.zero,
           builder: (context, state) {
-            final offset = (state.offset / state.actualTriggerOffset).clamp(0.0, 1.0);
+            final offset =
+                (state.offset / state.actualTriggerOffset).clamp(0.0, 1.0);
             return Container(
               color: Colors.black.withOpacity(0.25),
               height: state.offset,
               child: Center(
                 child: CircularProgressIndicator(
-                  value: [IndicatorMode.processing, IndicatorMode.ready].contains(state.mode) ? null : offset,
+                  value: [IndicatorMode.processing, IndicatorMode.ready]
+                          .contains(state.mode)
+                      ? null
+                      : offset,
                 ),
               ),
             );
@@ -110,9 +115,53 @@ class _HomePageState extends ConsumerState<AuthenticatorsPage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onAddAccountPressed,
-        child: const Icon(Icons.add),
+      floatingActionButtonLocation: ExpandableFab.location,
+      floatingActionButton: ExpandableFab(
+        openButtonBuilder: DefaultFloatingActionButtonBuilder(
+          child: const Icon(Icons.add),
+          fabSize: ExpandableFabSize.regular,
+          backgroundColor: Theme.of(context).colorScheme.onSurface,
+          foregroundColor: Theme.of(context).colorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        closeButtonBuilder: DefaultFloatingActionButtonBuilder(
+          child: const Icon(Icons.close),
+          fabSize: ExpandableFabSize.small,
+          backgroundColor: Theme.of(context).colorScheme.onSurface,
+          foregroundColor: Theme.of(context).colorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        type: ExpandableFabType.up,
+        childrenOffset: const Offset(0, -16),
+        distance: 70,
+        pos: ExpandableFabPos.right,
+        overlayStyle: ExpandableFabOverlayStyle(
+          color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+        ),
+        childrenAnimation: ExpandableFabAnimation.none,
+        children: [
+          FloatingActionButton.extended(
+            heroTag: null,
+            onPressed: () async {
+              final url = await ref
+                  .read(routerProvider)
+                  .pushNamed<String>(Routes.scanner.name);
+              print(url);
+            },
+            icon: const Icon(Icons.qr_code_scanner),
+            label: const Text("Scanner"),
+          ),
+          FloatingActionButton.extended(
+            heroTag: null,
+            onPressed: _onAddAccountPressed,
+            icon: const Icon(Icons.edit),
+            label: const Text("Manually"),
+          ),
+        ],
       ),
     );
   }
@@ -120,7 +169,6 @@ class _HomePageState extends ConsumerState<AuthenticatorsPage> {
   Future<void> _onAddAccountPressed() async {
     final account = await showMaterialModalBottomSheet<Account>(
       context: context,
-      useRootNavigator: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),

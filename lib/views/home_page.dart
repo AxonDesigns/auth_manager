@@ -52,7 +52,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         onPageChanged: (value) {
           final router = ref.read(routerProvider);
           _selectedIndex = value;
-          router.go(items[_selectedIndex].path);
+          router.replace(items[_selectedIndex].path);
           setState(() {});
         },
         itemBuilder: (context, index) {
@@ -96,7 +96,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             }
 
             final router = ref.read(routerProvider);
-            router.go(items[index].path);
+            router.replace(items[index].path);
           },
           items: [
             SalomonBottomBarItem(

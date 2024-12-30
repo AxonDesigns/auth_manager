@@ -27,6 +27,8 @@ dependencies:
   flutter_windowmanager: ^0.2.0
   salomon_bottom_bar: ^3.3.2
   easy_refresh: ^3.4.0
+  mobile_scanner: ^6.0.2
+  flutter_expandable_fab: ^2.3.0
 
 dev_dependencies:
   flutter_test:

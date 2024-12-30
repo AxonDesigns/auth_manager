@@ -60,8 +60,6 @@ class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final router = ref.watch(routerProvider);
-
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       scrollBehavior: const MaterialScrollBehavior().copyWith(
@@ -92,7 +90,7 @@ class _MainAppState extends ConsumerState<MainApp> with WidgetsBindingObserver {
           child: child!,
         );
       },
-      routerConfig: router,
+      routerConfig: ref.read(routerProvider),
     );
   }
 }

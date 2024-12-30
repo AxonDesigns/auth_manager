@@ -1,4 +1,5 @@
 import 'package:auth_manager/business.dart';
+import 'package:auth_manager/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -64,12 +65,8 @@ class _AddAccountPageState extends ConsumerState<AddAccountPage> {
             const SizedBox(height: 8),
             TextFormField(
               controller: _secretController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Secret",
-                suffixIcon: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.qr_code_scanner),
-                ),
               ),
               obscureText: true,
             ),
@@ -79,7 +76,7 @@ class _AddAccountPageState extends ConsumerState<AddAccountPage> {
               children: [
                 FilledButton.tonal(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    ref.read(routerProvider).pop();
                   },
                   child: const Text("Cancel"),
                 ),
