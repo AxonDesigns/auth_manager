@@ -12,15 +12,22 @@ class LockedPage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _LockedPageState();
 }
 
-class _LockedPageState extends ConsumerState<LockedPage> with WidgetsBindingObserver {
+class _LockedPageState extends ConsumerState<LockedPage> {
   bool get canAuthenticate => Platform.isAndroid || Platform.isIOS;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _authenticate();
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _authenticate();
+      });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void _authenticate() async {
